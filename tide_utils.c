@@ -84,7 +84,7 @@ void client_403(int sock)
 
 /* a successfull HTTP 200 response
 */
-void client_200(int sock, off_t file_len, const char *cont_type)
+int client_200(int sock, off_t file_len, const char *cont_type)
 {
     // buffer used to write back to the socket
     char *buf = safe_malloc(BUF);
@@ -103,10 +103,13 @@ void client_200(int sock, off_t file_len, const char *cont_type)
         free(buf);
         free(flen);
         server_error(sock, "writing 200 to client");
+        return 1;
     }
 
     free(buf);
     free(flen);
+    
+    return 0;
 }
 
 /* write the requested file back to the client
@@ -126,6 +129,28 @@ void client_write_file(int sock, int fd) {
 
     free(read_buf);
     close(fd);
+}
+
+/* get the file type for HTTP response based on the extension
+ * returns text/plain if there was no extension
+*/
+char *get_file_type(const char *file) {
+    char *type = safe_malloc(BUF);
+    char *ext = strrchr(file, '.');
+
+    if (!ext || !*(ext + 1))
+        type = "text/plain";
+    else if (!strcmp(ext + 1, "txt"))
+        type = "text/plain";
+    else if (!strcmp(ext + 1, "html"))
+        type = "text/html";
+    else if (!strcmp(ext + 1, "jpeg") || !strcmp(ext + 1, "jpg"))
+        type = "image/jpeg";
+    else if (!strcmp(ext + 1, "png"))
+        type = "image/png";
+
+    return type;
+        
 }
 
 /* file reading function for writing back to client
@@ -157,8 +182,17 @@ void write_client(int sock, const char *path) {
     }
 
     // successful request, print 200 and file
-    client_200(sock, buf.st_size, "text/plain");
-    client_write_file(sock, fd);
+    char *type = get_file_type(path);
+    int fail = client_200(sock, buf.st_size, type);
+    if (!fail)
+        client_write_file(sock, fd);
+    else {
+        free(type);
+        free(rel_path);
+        server_error(sock, "writing 200 request to client");
+        return;
+    }
     
+    free(type);
     free(rel_path);
 }
