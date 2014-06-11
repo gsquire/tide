@@ -132,7 +132,7 @@ void client_write_file(int sock, int fd) {
 }
 
 /* get the file type for HTTP response based on the extension
- * returns text/plain if there was no extension
+ * returns text/plain if there was no extension or it is not listed
 */
 char *get_file_type(const char *file) {
     char *type = safe_malloc(BUF);
@@ -148,6 +148,8 @@ char *get_file_type(const char *file) {
         type = "image/jpeg";
     else if (!strcmp(ext + 1, "png"))
         type = "image/png";
+    else
+        type = "text/plain";
 
     return type;
         
