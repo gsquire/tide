@@ -10,6 +10,7 @@
 
 #define BUF 256
 #define GET "GET "
+
 /* just a check to see if we could really get memory
 */
 void *safe_malloc(size_t size) {
@@ -64,9 +65,9 @@ void client_404(int sock) {
 
 /* return a 403 response to the client
 */
-void client_403(int sock)
-{
+void client_403(int sock) {
     char *buf = safe_malloc(BUF);
+
     strcpy(buf, "HTTP/1.1 403 Forbidden\r\n");
     strcat(buf, "<HTML><HEAD><TITLE>HTTP ERROR 403</TITLE></HEAD><BODY>");
     strcat(buf,
@@ -84,9 +85,7 @@ void client_403(int sock)
 
 /* a successfull HTTP 200 response
 */
-int client_200(int sock, off_t file_len, const char *cont_type)
-{
-    // buffer used to write back to the socket
+int client_200(int sock, off_t file_len, const char *cont_type) {
     char *buf = safe_malloc(BUF);
     char *flen = safe_malloc(BUF);
     sprintf(flen, "%ld", file_len);
@@ -151,7 +150,7 @@ void get_file_type(const char *file, char *type) {
         strcpy(type, "text/plain");
 }
 
-/* file reading function for writing back to client
+/* determine the appropriate HTTP response
  * TODO add logging support for server errors here
 */
 void write_client(int sock, const char *path) {
@@ -193,5 +192,4 @@ void write_client(int sock, const char *path) {
         server_error(sock, "writing 200 request to client");
         return;
     }
-    
 }

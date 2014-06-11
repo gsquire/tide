@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     const char *opts = "6hp:";
 
-    // port option, 0 for default lettins OS choose
+    // port option, 0 for default letting OS choose
     int port = 0;
 
     // ipv6 option
