@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "tide_server.h"
+#include "tide_error.h"
 
 /* our global server socket
 */
@@ -29,7 +30,7 @@ void usage_exit() {
 }
 
 int main(int argc, char *argv[]) {
-    int opt, ind;
+    int opt;
 
     const char *opts = "6hp:";
 

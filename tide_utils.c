@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include "tide_utils.h"
 
+#include "tide_error.h"
+
 #define BUF 256
 #define GET "GET "
 
