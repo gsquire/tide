@@ -90,7 +90,7 @@ void client_403(int sock) {
 int client_200(int sock, off_t file_len, const char *cont_type) {
     char *buf = safe_malloc(BUF);
     char *flen = safe_malloc(BUF);
-    sprintf(flen, "%ld", file_len);
+    sprintf(flen, "%lld", (long long int) file_len);
 
     strcpy(buf, "HTTP/1.1 200 OK\r\n");
     strcat(buf, "Content-Type: ");
